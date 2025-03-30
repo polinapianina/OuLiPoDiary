@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import fieldEncryptionPlugin from 'mongoose-field-encryption';
 
 const DiaryEntrySchema = new mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
@@ -13,5 +14,12 @@ const DiaryEntrySchema = new mongoose.Schema({
     deleted: {type: Boolean, default: false}
 });
 
+// apply the plugin to encrypt the `content` field
+DiaryEntrySchema.plugin(fieldEncryptionPlugin.fieldEncryption, {
+    fields: ['content'],               // fields to encrypt
+    secret: process.env.ENCRYPTION_KEY // from your .env
+});
+
+// exporting the model
 const DiaryEntry = mongoose.model('DiaryEntry', DiaryEntrySchema);
 export default DiaryEntry;
