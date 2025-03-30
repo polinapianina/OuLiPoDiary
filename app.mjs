@@ -1,4 +1,5 @@
 import './config.mjs';
+console.log('DSN from env:', process.env.DSN); // Debug
 import mongoose from 'mongoose';
 import express from 'express';
 import path from 'path';
@@ -162,6 +163,7 @@ app.post('/register', async (req, res) => {
         // redirecting to the login page after registration
         res.redirect('/login');
     } catch (error) {
+        console.error('Registration error:', error); // debug
         req.flash('registerError', 'An error occurred during registration. Please try again.');
         return res.redirect('/register');
     }
