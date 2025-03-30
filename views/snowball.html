@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowball Technique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: blue;
+        }
+        textarea {
+            width: 40%;
+            height: 100px;
+            margin: 10px 0;
+        }
+        button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Tabs -->
+    <nav>
+        <a href="/main">Main Page</a>
+        <a href="/practice-techniques">Practice Techniques</a>
+        <a href="/archive">Diary Archive</a>
+    </nav>
+
+    <h1>Snowball Explained:</h1>
+    <p>The Snowball technique involves rewriting the input text so that each line contains only one word. The process starts with the shortest word from the input text, placing it on the first line. Then, the next word is chosen to be one letter longer (if available); if no such word exists, a word that is two or more letters longer is selected instead. Priority is always given to words that appear earlier in the input text. The resulting "snowball poem" is complete when there are no longer any larger words available to use.</p>
+
+    <textarea placeholder="Write here..."></textarea>
+    <button>Transform</button>
+    <textarea placeholder="Transformed text will appear here..." readonly></textarea>
+
+    <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
+    <script type="module">
+        import { transformSnowball } from '/js/techniques.js';
+    
+        const transformButton = document.querySelector('button');
+        const inputTextarea = document.querySelector('textarea:nth-of-type(1)');
+        const outputTextarea = document.querySelector('textarea:nth-of-type(2)');
+    
+        transformButton.addEventListener('click', async () => {
+            const inputText = inputTextarea.value;
+            const transformedText = await transformSnowball(inputText);
+            outputTextarea.value = transformedText;
+        });
+    </script>
+</body>
+</html>

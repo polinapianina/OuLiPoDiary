@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acrostic Technique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: blue;
+        }
+        textarea {
+            width: 40%;
+            height: 100px;
+            margin: 10px 0;
+        }
+        button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Tabs -->
+    <nav>
+        <a href="/main">Main Page</a>
+        <a href="/practice-techniques">Practice Techniques</a>
+        <a href="/archive">Diary Archive</a>
+    </nav>
+
+    <h1>Acrostic Explained:</h1>
+    <p>The acrostic technique involves creating a word using letters from the input text. The output is a single word composed of letters found in the original text. Each transformation produces a different word, even when applied to the same text.</p>
+
+    <textarea placeholder="Write here..."></textarea>
+    <button>Transform</button>
+    <textarea placeholder="Transformed text will appear here..." readonly></textarea>
+
+    <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
+    <script type="module">
+        import { transformAcrostic } from '/js/techniques.js';
+    
+        const transformButton = document.querySelector('button');
+        const inputTextarea = document.querySelector('textarea:nth-of-type(1)');
+        const outputTextarea = document.querySelector('textarea:nth-of-type(2)');
+        
+        transformButton.addEventListener('click', async () => {
+            const inputText = inputTextarea.value;
+            const transformedText = await transformAcrostic(inputText);
+            outputTextarea.value = transformedText;
+        });
+    </script>
+</body>
+</html>

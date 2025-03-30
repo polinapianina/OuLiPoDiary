@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OuLiPien Diary - Main Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>You are logged in to your OuLiPien Diary!</h1>
+
+    <nav>
+        <a href="/write">Write</a>
+        <a href="/practice">Practice Techniques</a>
+        <a href="/archive">Diary Archive</a>
+    </nav>
+
+    <form action="/logout" method="POST" style="margin-top: 30px;">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>

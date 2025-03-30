@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OuLiPien Diary - Write Entry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: blue;
+        }
+        #writing-box {
+            width: 60%;
+            height: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .button-container button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/main">Main Page</a>
+        <a href="/practice">Practice Techniques</a>
+        <a href="/archive">Diary Archive</a>
+    </nav>
+
+    <h2 style="text-align: center;">Happy Writing!</h2>
+
+    <textarea id="writing-box" placeholder="Start writing your diary entry here..."></textarea>
+
+    <div class="button-container">
+        <button id="refresh-entry" type="button">Refresh Entry</button>
+        <button id="add-entry" type="button">Add Entry</button>
+    </div>
+
+    <div id="entry-modal" style="display: none;">
+        <h3>Is this entry private or public?</h3>
+        <button id="private-entry" type="button">Private</button>
+        <button id="public-entry" type="button">Public</button>
+    </div>
+
+    <script>
+        // JS for handling the button actions
+        const writingBox = document.getElementById('writing-box');
+        const refreshEntryButton = document.getElementById('refresh-entry');
+        const addEntryButton = document.getElementById('add-entry');
+        const entryModal = document.getElementById('entry-modal');
+        const privateEntryButton = document.getElementById('private-entry');
+        const publicEntryButton = document.getElementById('public-entry');
+
+        // refresh entry
+        refreshEntryButton.addEventListener('click', () => {
+            writingBox.value = '';
+        });
+
+        // add entry
+        addEntryButton.addEventListener('click', () => {
+            entryModal.style.display = 'block';
+        });
+
+        // private vs public
+        privateEntryButton.addEventListener('click', () => {
+            saveEntry('private');
+        });
+
+        publicEntryButton.addEventListener('click', () => {
+            saveEntry('public');
+        });
+
+        // save entry based on private vs public
+        function saveEntry(type) {
+            const content = writingBox.value;
+            if (content.trim() === '') {
+                alert('Please write something before saving.');
+                return;
+            }
+
+            fetch('/save-entry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content,
+                    type,
+                }),
+            }).then(response => {
+                if (response.ok) {
+                    alert('Entry saved successfully!');
+                    writingBox.value = '';
+                    entryModal.style.display = 'none';
+                } else {
+                    alert('Error saving entry.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
