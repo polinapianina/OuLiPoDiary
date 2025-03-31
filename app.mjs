@@ -13,11 +13,25 @@ import session from 'express-session';
 import flash from 'connect-flash';
 import { Server } from 'socket.io'; 
 import http from 'http';
+import { transformN7 } from './public/js/techniques.js';
+
+const router = express.Router();
+
+router.post('/n7-transform', (req, res) => {
+  const { text } = req.body; // expecting JSON { text: "..." }
+  if (!text) {
+    return res.status(400).json({ error: 'No text provided' });
+  }
+  const transformed = transformN7ServerSide(text);
+  return res.json({ transformed });
+});
 
 // express app + setup paths
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.use(router);
 
 // connect to MongoDB
 mongoose.connect(process.env.DSN).then(() => {
