@@ -13,25 +13,12 @@ import session from 'express-session';
 import flash from 'connect-flash';
 import { Server } from 'socket.io'; 
 import http from 'http';
-import { transformN7 } from './public/js/techniques.js';
-
-const router = express.Router();
-
-router.post('/n7-transform', (req, res) => {
-  const { text } = req.body; // expecting JSON { text: "..." }
-  if (!text) {
-    return res.status(400).json({ error: 'No text provided' });
-  }
-  const transformed = transformN7ServerSide(text);
-  return res.json({ transformed });
-});
+import { transformN7 } from './n7.mjs';
 
 // express app + setup paths
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-app.use(router);
 
 // connect to MongoDB
 mongoose.connect(process.env.DSN).then(() => {
@@ -60,6 +47,19 @@ const broadcastNewEntry = async () => {
 // middleware to parse url-encoded data and json payloads
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+const router = express.Router();
+
+router.post('/n7-transform', (req, res) => {
+  const { text } = req.body; // expecting JSON { text: "..." }
+  if (!text) {
+    return res.status(400).json({ error: 'No text provided' });
+  }
+  const transformed = transformN7(text);
+  return res.json({ transformed });
+});
+
+app.use(router);
 
 // session and flash middleware setup (correct order is important)
 app.use(session({
@@ -491,55 +491,81 @@ app.get('/practice-techniques/n7', (req, res) => {
         return res.redirect('/register');
     }
     res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>N+7 Technique</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    text-align: center;
-                    padding: 20px;
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>N+7 Technique</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+            }
+            nav {
+                margin-bottom: 20px;
+            }
+            nav a {
+                margin: 0 15px;
+                text-decoration: none;
+                color: blue;
+            }
+            textarea {
+                width: 40%;
+                height: 100px;
+                margin: 10px 0;
+            }
+            button {
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation Tabs -->
+        <nav>
+            <a href="/main">Main Page</a>
+            <a href="/practice-techniques">Practice Techniques</a>
+            <a href="/archive">Diary Archive</a>
+        </nav>
+
+        <h1>N+7 Explained:</h1>
+        <p>
+            The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves replacing each 
+            noun in an input text with the seventh one following it in a dictionary.
+        </p>
+
+        <textarea id="input-text"></textarea>
+        <button  id="transform-btn">Transform</button>
+        <textarea id="output-text" readonly></textarea>
+
+        <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
+        <script>
+            const transformButton = document.getElementById('transform-btn');
+            const inputTextarea = document.getElementById('input-text');
+            const outputTextarea = document.getElementById('output-text');
+        
+            transformButton.addEventListener('click', async () => {
+                const inputText = inputTextarea.value;
+                // Make a POST request to our server route
+                try {
+                    const response = await fetch('/n7-transform', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: inputText })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Server error while transforming text');
+                    }
+                    const data = await response.json();
+                    // data.transformed is the N+7 result
+                    outputTextarea.value = data.transformed;
+                } catch (err) {
+                    console.error(err);
+                    alert('Error: ' + err.message);
                 }
-                nav {
-                    margin-bottom: 20px;
-                }
-                nav a {
-                    margin: 0 15px;
-                    text-decoration: none;
-                    color: blue;
-                }
-                textarea {
-                    width: 40%;
-                    height: 100px;
-                    margin: 10px 0;
-                }
-                button {
-                    margin: 10px 0;
-                }
-            </style>
-        </head>
-        <body>
-            <nav>
-                <a href="/main">Main Page</a>
-                <a href="/practice-techniques">Practice Techniques</a>
-                <a href="/archive">Diary Archive</a>
-            </nav>
-            <h1>N+7 Explained:</h1>
-            <p>
-                The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves replacing each 
-                noun in an input text with the seventh one following it in a dictionary.
-            </p>
-            <textarea id="input-text" placeholder="Write here..."></textarea>
-            <button id="transform-btn">Transform</button>
-            <textarea id="output-text" placeholder="Transformed text will appear here..." readonly></textarea>
-            <script>
-                const DICTIONARY_API_URL = '${process.env.DICTIONARY_API_URL}';
-                const DICTIONARY_API_KEY = '${process.env.DICTIONARY_API_KEY}';
+            });
             </script>
-            <script src="/js/techniques.js" type="module"></script>
         </body>
         </html>
     `);
