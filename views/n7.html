@@ -1,77 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N+7 Technique</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: blue;
-        }
-        textarea {
-            width: 40%;
-            height: 100px;
-            margin: 10px 0;
-        }
-        button {
-            margin: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>N+7 Technique</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
 </head>
 <body>
-    <!-- Navigation Tabs -->
-    <nav>
-        <a href="/main">Main Page</a>
-        <a href="/practice-techniques">Practice Techniques</a>
-        <a href="/archive">Diary Archive</a>
-    </nav>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+      <button 
+        class="navbar-toggler" 
+        type="button"
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarSupportedContent"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <h1>N+7 Explained:</h1>
-    <p>
-        The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves replacing each 
-        noun in an input text with the seventh one following it in a dictionary.
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/practice-techniques">Practice Techniques</a></li>
+          <li class="nav-item"><a class="nav-link" href="/archive">Diary Archive</a></li>
+          <li class="nav-item"><a class="nav-link" href="/write">Write</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <h1 class="mb-3">N+7 Explained</h1>
+    <p class="lead">
+      The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves 
+      replacing each noun in an input text with the seventh one following it in a dictionary.
     </p>
 
-    <textarea id="input-text" placeholder="Write here..."></textarea>
-    <button id="transform-btn">Transform</button>
-    <textarea id="output-text" placeholder="Transformed text will appear here..." readonly></textarea>
+    <!-- Input field -->
+    <div class="mb-3">
+      <label for="input-text" class="form-label">Enter text:</label>
+      <textarea 
+        id="input-text" 
+        class="form-control" 
+        rows="4" 
+        placeholder="Write here..."
+      ></textarea>
+    </div>
 
-    <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
-    <script>
-        const transformButton = document.getElementById('transform-btn');
-        const inputTextarea = document.getElementById('input-text');
-        const outputTextarea = document.getElementById('output-text');
-    
-        transformButton.addEventListener('click', async () => {
-            const inputText = inputTextarea.value;
-            // Make a POST request to our server route
-            try {
-                const response = await fetch('/n7-transform', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: inputText })
-                });
-                if (!response.ok) {
-                    throw new Error('Server error while transforming text');
-                }
-                const data = await response.json();
-                // data.transformed is the N+7 result
-                outputTextarea.value = data.transformed;
-            } catch (err) {
-                console.error(err);
-                alert('Error: ' + err.message);
-            }
+    <button id="transform-btn" class="btn btn-primary mb-3">Transform</button>
+
+    <!-- Output field -->
+    <div class="mb-3">
+      <label for="output-text" class="form-label">Transformed text:</label>
+      <textarea 
+        id="output-text" 
+        class="form-control" 
+        rows="4" 
+        readonly
+        placeholder="Transformed text will appear here..."
+      ></textarea>
+    </div>
+
+    <p class="text-muted">
+      * Please save your work as an entry if you want it to be saved (copy/paste to 
+      <a href="/write">Write</a>).
+    </p>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <script>
+    const transformButton = document.getElementById('transform-btn');
+    const inputTextarea = document.getElementById('input-text');
+    const outputTextarea = document.getElementById('output-text');
+
+    transformButton.addEventListener('click', async () => {
+      const inputText = inputTextarea.value;
+      try {
+        const response = await fetch('/n7-transform', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: inputText })
         });
-        </script>
-    </body>
-    </html>
+        if (!response.ok) {
+          throw new Error('Server error while transforming text');
+        }
+        const data = await response.json();
+        outputTextarea.value = data.transformed;
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
