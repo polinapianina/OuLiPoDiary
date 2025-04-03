@@ -39,9 +39,9 @@
     <h1>Snowball Explained:</h1>
     <p>The Snowball technique involves rewriting the input text so that each line contains only one word. The process starts with the shortest word from the input text, placing it on the first line. Then, the next word is chosen to be one letter longer (if available); if no such word exists, a word that is two or more letters longer is selected instead. Priority is always given to words that appear earlier in the input text. The resulting "snowball poem" is complete when there are no longer any larger words available to use.</p>
 
-    <textarea placeholder="Write here..."></textarea>
-    <button>Transform</button>
-    <textarea placeholder="Transformed text will appear here..." readonly></textarea>
+    <textarea id="input-text" placeholder="Write here..."></textarea>
+    <button id="transform-btn">Transform</button>
+    <textarea id="output-text" placeholder="Transformed text will appear here..." readonly></textarea>
 
     <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
     <script>

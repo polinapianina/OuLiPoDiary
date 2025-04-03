@@ -15,7 +15,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 import { transformN7 } from './n7.mjs';
 import { transformSnowball } from './snowball.mjs';
-
+import { transformAntonymic } from './antonymic.mjs';
 
 // express app + setup paths
 const app = express();
@@ -65,6 +65,15 @@ router.post('/snowball-transform', (req, res) => {
     const { text } = req.body;
     const poem = transformSnowball(text);
     res.json({ poem });
+  });
+
+  router.post('/antonymic-transform', async (req, res) => {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'No text provided' });
+    }
+    const result = await transformAntonymic(text);
+    res.json({ result });
   });
 
 app.use(router);
@@ -580,12 +589,12 @@ app.get('/practice-techniques/n7', (req, res) => {
 });
 
 
-// Acrostic Technique Page
-app.get('/practice-techniques/acrostic', (req, res) => {
+// Antonymic Technique Page
+app.get('/practice-techniques/antonymic', (req, res) => {
     if (!req.isAuthenticated()) {
         return res.redirect('/register');
     }
-    res.sendFile(path.join(__dirname, 'views', 'acrostic.html'));
+    res.sendFile(path.join(__dirname, 'views', 'antonymic.html'));
 });
 
 // the Snowball Technique page

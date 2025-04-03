@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antonymic Translation Technique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: blue;
+        }
+        textarea {
+            width: 40%;
+            height: 100px;
+            margin: 10px 0;
+        }
+        button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Tabs -->
+    <nav>
+        <a href="/main">Main Page</a>
+        <a href="/practice-techniques">Practice Techniques</a>
+        <a href="/archive">Diary Archive</a>
+    </nav>
+
+    <h1>Antonymic Translation Explained:</h1>
+    <p>The antonymic translation technique involves replacing each of the important words (noun, verb, adjective, adverb) with one of its possible antonyms. For example, Georges Perec's translation of the first sentence of In Search of Lost Time, "For a long time I went to bed early" gives; "Once, the other slept in."</p>
+
+    <textarea id="input-text" placeholder="Write here..."></textarea>
+    <button id="transform-btn">Transform</button>
+    <textarea id="output-text" placeholder="Transformed text will appear here..." readonly></textarea>
+
+    <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
+    <script>
+    document.getElementById('transform-btn').addEventListener('click', async () => {
+        const inputText = document.getElementById('input-text').value;
+        try {
+        const response = await fetch('/antonymic-transform', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: inputText })
+        });
+        if (!response.ok) {
+            throw new Error('Server error');
+        }
+        const data = await response.json();
+        document.getElementById('output-text').value = data.result;
+        } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+        }
+    });
+    </script>
+</body>
+</html>
