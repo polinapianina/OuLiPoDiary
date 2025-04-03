@@ -44,18 +44,24 @@
     <textarea placeholder="Transformed text will appear here..." readonly></textarea>
 
     <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
-    <script type="module">
-        import { transformSnowball } from '/js/techniques.js';
-    
-        const transformButton = document.querySelector('button');
-        const inputTextarea = document.querySelector('textarea:nth-of-type(1)');
-        const outputTextarea = document.querySelector('textarea:nth-of-type(2)');
-    
-        transformButton.addEventListener('click', async () => {
-            const inputText = inputTextarea.value;
-            const transformedText = await transformSnowball(inputText);
-            outputTextarea.value = transformedText;
+    <script>
+        document.querySelector('button').addEventListener('click', async () => {
+          const inputText = document.querySelector('textarea:nth-of-type(1)').value;
+          try {
+            const resp = await fetch('/snowball-transform', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: inputText })
+            });
+            if (!resp.ok) throw new Error('Transform error');
+            const data = await resp.json();
+            document.querySelector('textarea:nth-of-type(2)').value = data.poem;
+          } catch (err) {
+            console.error(err);
+            alert('Error: ' + err.message);
+          }
         });
-    </script>
+      </script>
+      
 </body>
 </html>

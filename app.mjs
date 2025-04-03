@@ -14,6 +14,8 @@ import flash from 'connect-flash';
 import { Server } from 'socket.io'; 
 import http from 'http';
 import { transformN7 } from './n7.mjs';
+import { transformSnowball } from './snowball.mjs';
+
 
 // express app + setup paths
 const app = express();
@@ -58,6 +60,12 @@ router.post('/n7-transform', (req, res) => {
   const transformed = transformN7(text);
   return res.json({ transformed });
 });
+
+router.post('/snowball-transform', (req, res) => {
+    const { text } = req.body;
+    const poem = transformSnowball(text);
+    res.json({ poem });
+  });
 
 app.use(router);
 
