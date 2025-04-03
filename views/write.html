@@ -1,116 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OuLiPien Diary - Write Entry</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        nav {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: blue;
-        }
-        #writing-box {
-            width: 60%;
-            height: 200px;
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-        }
-        .button-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .button-container button {
-            margin: 5px;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OuLiPien Diary - Write Entry</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
 </head>
 <body>
-    <nav>
-        <a href="/main">Main Page</a>
-        <a href="/practice">Practice Techniques</a>
-        <a href="/archive">Diary Archive</a>
-    </nav>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+      <button 
+        class="navbar-toggler" 
+        type="button"
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarSupportedContent"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/practice">Practice Techniques</a></li>
+          <li class="nav-item"><a class="nav-link" href="/archive">Diary Archive</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <h2 style="text-align: center;">Happy Writing!</h2>
+  <div class="container my-4">
+    <h2 class="text-center mb-4">Happy Writing!</h2>
 
-    <textarea id="writing-box" placeholder="Start writing your diary entry here..."></textarea>
-
-    <div class="button-container">
-        <button id="refresh-entry" type="button">Refresh Entry</button>
-        <button id="add-entry" type="button">Add Entry</button>
+    <!-- Textarea -->
+    <div class="mb-3">
+      <label for="writing-box" class="form-label">Start writing your diary entry here...</label>
+      <textarea 
+        id="writing-box"
+        class="form-control"
+        rows="6"
+      ></textarea>
     </div>
 
-    <div id="entry-modal" style="display: none;">
-        <h3>Is this entry private or public?</h3>
-        <button id="private-entry" type="button">Private</button>
-        <button id="public-entry" type="button">Public</button>
+    <div class="text-center mb-3">
+      <button id="refresh-entry" type="button" class="btn btn-secondary me-2">
+        Refresh Entry
+      </button>
+      <button id="add-entry" type="button" class="btn btn-primary">
+        Add Entry
+      </button>
     </div>
 
-    <script>
-        // JS for handling the button actions
-        const writingBox = document.getElementById('writing-box');
-        const refreshEntryButton = document.getElementById('refresh-entry');
-        const addEntryButton = document.getElementById('add-entry');
-        const entryModal = document.getElementById('entry-modal');
-        const privateEntryButton = document.getElementById('private-entry');
-        const publicEntryButton = document.getElementById('public-entry');
+    <!-- Modal-like area for setting private/public -->
+    <div id="entry-modal" class="border p-3" style="display: none;">
+      <h3>Is this entry private or public?</h3>
+      <div>
+        <button id="private-entry" type="button" class="btn btn-outline-dark me-2">
+          Private
+        </button>
+        <button id="public-entry" type="button" class="btn btn-outline-dark">
+          Public
+        </button>
+      </div>
+    </div>
+  </div>
 
-        // refresh entry
-        refreshEntryButton.addEventListener('click', () => {
-            writingBox.value = '';
+  <script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <script>
+    // JS for handling button actions
+    const writingBox = document.getElementById('writing-box');
+    const refreshEntryButton = document.getElementById('refresh-entry');
+    const addEntryButton = document.getElementById('add-entry');
+    const entryModal = document.getElementById('entry-modal');
+    const privateEntryButton = document.getElementById('private-entry');
+    const publicEntryButton = document.getElementById('public-entry');
+
+    // refresh entry
+    refreshEntryButton.addEventListener('click', () => {
+      writingBox.value = '';
+    });
+
+    // add entry
+    addEntryButton.addEventListener('click', () => {
+      entryModal.style.display = 'block';
+    });
+
+    // private vs public
+    privateEntryButton.addEventListener('click', () => {
+      saveEntry('private');
+    });
+    publicEntryButton.addEventListener('click', () => {
+      saveEntry('public');
+    });
+
+    // save entry
+    async function saveEntry(type) {
+      const content = writingBox.value;
+      if (!content.trim()) {
+        alert('Please write something before saving.');
+        return;
+      }
+      try {
+        const response = await fetch('/save-entry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content, type })
         });
-
-        // add entry
-        addEntryButton.addEventListener('click', () => {
-            entryModal.style.display = 'block';
-        });
-
-        // private vs public
-        privateEntryButton.addEventListener('click', () => {
-            saveEntry('private');
-        });
-
-        publicEntryButton.addEventListener('click', () => {
-            saveEntry('public');
-        });
-
-        // save entry based on private vs public
-        function saveEntry(type) {
-            const content = writingBox.value;
-            if (content.trim() === '') {
-                alert('Please write something before saving.');
-                return;
-            }
-
-            fetch('/save-entry', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content,
-                    type,
-                }),
-            }).then(response => {
-                if (response.ok) {
-                    alert('Entry saved successfully!');
-                    writingBox.value = '';
-                    entryModal.style.display = 'none';
-                } else {
-                    alert('Error saving entry.');
-                }
-            });
+        if (response.ok) {
+          alert('Entry saved successfully!');
+          writingBox.value = '';
+          entryModal.style.display = 'none';
+        } else {
+          alert('Error saving entry.');
         }
-    </script>
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+  </script>
 </body>
 </html>

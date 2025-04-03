@@ -1,67 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snowball Technique</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: blue;
-        }
-        textarea {
-            width: 40%;
-            height: 100px;
-            margin: 10px 0;
-        }
-        button {
-            margin: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snowball Technique</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
 </head>
 <body>
-    <!-- Navigation Tabs -->
-    <nav>
-        <a href="/main">Main Page</a>
-        <a href="/practice-techniques">Practice Techniques</a>
-        <a href="/archive">Diary Archive</a>
-    </nav>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+      <button 
+        class="navbar-toggler" 
+        type="button"
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarSupportedContent"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/practice-techniques">Practice Techniques</a></li>
+          <li class="nav-item"><a class="nav-link" href="/archive">Diary Archive</a></li>
+          <li class="nav-item"><a class="nav-link" href="/write">Write</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <h1>Snowball Explained:</h1>
-    <p>The Snowball technique involves rewriting the input text so that each line contains only one word. The process starts with the shortest word from the input text, placing it on the first line. Then, the next word is chosen to be one letter longer (if available); if no such word exists, a word that is two or more letters longer is selected instead. Priority is always given to words that appear earlier in the input text. The resulting "snowball poem" is complete when there are no longer any larger words available to use.</p>
+  <div class="container my-4">
+    <h1 class="mb-3 text-center">Snowball Explained</h1>
+    <p class="lead">
+      The Snowball technique involves rewriting the input text so that each line contains only one word. 
+      The process starts with the shortest word from the input text, placing it on the first line. Then, 
+      the next word is chosen to be one letter longer (if available); if no such word exists, a word that 
+      is two or more letters longer is selected. Priority is always given to words that appear earlier 
+      in the input text.
+    </p>
 
-    <textarea id="input-text" placeholder="Write here..."></textarea>
-    <button id="transform-btn">Transform</button>
-    <textarea id="output-text" placeholder="Transformed text will appear here..." readonly></textarea>
+    <div class="mb-3">
+      <label for="input-text" class="form-label">Enter text:</label>
+      <textarea 
+        id="input-text" 
+        class="form-control" 
+        rows="4" 
+        placeholder="Write here..."
+      ></textarea>
+    </div>
 
-    <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
-    <script>
-        document.querySelector('button').addEventListener('click', async () => {
-          const inputText = document.querySelector('textarea:nth-of-type(1)').value;
-          try {
-            const resp = await fetch('/snowball-transform', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: inputText })
-            });
-            if (!resp.ok) throw new Error('Transform error');
-            const data = await resp.json();
-            document.querySelector('textarea:nth-of-type(2)').value = data.poem;
-          } catch (err) {
-            console.error(err);
-            alert('Error: ' + err.message);
-          }
+    <button id="transform-btn" class="btn btn-primary mb-3">Transform</button>
+
+    <div class="mb-3">
+      <label for="output-text" class="form-label">Transformed text:</label>
+      <textarea 
+        id="output-text" 
+        class="form-control" 
+        rows="4" 
+        readonly
+        placeholder="Transformed text will appear here..."
+      ></textarea>
+    </div>
+
+    <p class="text-muted">
+      * Please save your work if you want it to be permanent 
+      (copy/paste to <a href="/write">Write</a> page).
+    </p>
+  </div>
+
+  <script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <script>
+    document.getElementById('transform-btn').addEventListener('click', async () => {
+      const inputText = document.getElementById('input-text').value;
+      try {
+        const resp = await fetch('/snowball-transform', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: inputText })
         });
-      </script>
-      
+        if (!resp.ok) throw new Error('Transform error');
+        const data = await resp.json();
+        document.getElementById('output-text').value = data.poem;
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    });
+  </script>
 </body>
 </html>

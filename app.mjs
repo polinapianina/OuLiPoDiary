@@ -112,26 +112,70 @@ app.get('/register', (req, res) => {
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Register</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Register</title>
+        <link 
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+        >
         </head>
         <body>
-            <h1>Register</h1>
+        <!-- Nav (optional) -->
+        <nav class="navbar navbar-expand-md navbar-light bg-light mb-4">
+            <div class="container">
+            <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+            <button 
+                class="navbar-toggler" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#navbarSupportedContent"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                </ul>
+            </div>
+            </div>
+        </nav>
 
-            ${registerError && registerError.length > 0 ? `<div style="color: red;">${registerError}</div>` : ''}
-
-            <form id="register-form" action="/register" method="POST">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <br>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <br>
-                <button type="submit">Register</button>
-            </form>
+        <div class="container">
+            <h1 class="mb-4">Register</h1>
             
-            <p>Already have an account? <a href="/login">Login here</a></p>
+            <form action="/register" method="POST" class="mx-auto" style="max-width: 400px;">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input 
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                required
+                >
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+                >
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+
+            <p class="mt-3">
+            Already have an account? <a href="/login">Login here</a>
+            </p>
+        </div>
+
+        <script 
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+        </script>
         </body>
         </html>
     `;
@@ -147,26 +191,40 @@ app.get('/login', (req, res) => {
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <link 
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        >
         </head>
         <body>
+        <nav class="navbar navbar-expand-md navbar-light bg-light mb-4">
+            <div class="container">
+            <a class="navbar-brand" href="/">OuLiPien Diary</a>
+            <!-- etc. -->
+            </div>
+        </nav>
+
+        <div class="container">
             <h1>Login</h1>
-
-            ${errorMessage && errorMessage.length > 0 ? `<div style="color: red;">${errorMessage}</div>` : ''}
-
-            <form id="login-form" action="/login" method="POST">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <br>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <br>
-                <button type="submit">Login</button>
+            <form action="/login" method="POST" style="max-width:400px;margin:auto;">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
+        </div>
 
-            <p>Don't have an account? <a href="/register">Register here</a></p>
+        <script 
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+        </script>
         </body>
         </html>
     `;
@@ -286,73 +344,81 @@ app.get('/archive', async (req, res) => {
 
         // rendering the archive page
         let archivePage = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Diary Archive</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        text-align: center;
-                        padding: 20px;
-                    }
-                    ul {
-                        list-style-type: none; /* Removes bullet points */
-                        padding: 0;
-                    }
-                    nav {
-                        margin-bottom: 20px;
-                    }
-                    nav a {
-                        margin: 0 15px;
-                        text-decoration: none;
-                        color: blue;
-                    }
-                    .entry-section {
-                        margin: 20px 0;
-                    }
-                    .entry-list li {
-                        margin: 10px 0;
-                    }
-                </style>
-            </head>
-            <body>
-                <!-- Navigation Tabs -->
-                <nav>
-                    <a href="/main">Main Page</a>
-                    <a href="/practice">Practice Techniques</a>
-                    <a href="/write">Write</a>
-                </nav>
-
-                <h1>Welcome to your diary archive!</h1>
-                
-                <!-- Your Entries Section -->
-                <div class="entry-section">
-                    <h2>Your Entries (Public & Private)</h2>
-                    <ul>
-                        ${userEntries.map(entry => `
-                            <li>
-                                <a href="/entry/${entry._id}">${entry.content.substring(0, 50)}</a>
-                                <span>[${entry.status}]</span>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-
-                <!-- Other Users' Public Entries -->
-                <div class="entry-section">
-                    <h2>Other Users' Public Entries</h2>
-                    <ul>
-                        ${publicEntries.map(entry => `
-                            <li>${entry.user.username}: <a href="/entry/${entry._id}">${entry.content.substring(0, 50)}</a></li>
-                        `).join('')}
-                    </ul>
-                </div>
-            </body>
-            </html>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+          <title>Diary Archive</title>
+          <!-- Bootstrap CSS -->
+          <link 
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          />
+        </head>
+        <body>
+          <nav class="navbar navbar-expand-md navbar-light bg-light mb-4">
+            <div class="container">
+              <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+              <button 
+                class="navbar-toggler"
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#navbarSupportedContent"
+              >
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item"><a class="nav-link" href="/practice">Practice Techniques</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/write">Write</a></li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        
+          <div class="container">
+            <h1 class="mb-4 text-center">Welcome to your diary archive!</h1>
+        
+            <!-- Your Entries Section -->
+            <div class="mb-5">
+              <h2>Your Entries (Public & Private)</h2>
+              <ul class="list-group">
+                ${userEntries.map(entry => `
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="/entry/${entry._id}">
+                      ${entry.content.substring(0, 50)}
+                    </a>
+                    <span class="badge bg-secondary">${entry.status}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+        
+            <!-- Other Users' Public Entries -->
+            <div>
+              <h2>Other Users' Public Entries</h2>
+              <ul class="list-group">
+                ${publicEntries.map(entry => `
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>${entry.user.username}</span>
+                    <a href="/entry/${entry._id}">
+                      ${entry.content.substring(0, 50)}
+                    </a>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+        
+          <!-- Bootstrap JS -->
+          <script 
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+          </script>
+        </body>
+        </html>
         `;
+        
 
         res.send(archivePage);
     } catch (error) {
@@ -392,46 +458,60 @@ app.get('/entry/:id', async (req, res) => {
         }
 
         let entryPage = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Diary Entry</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        text-align: center;
-                        padding: 20px;
-                    }
-                    nav {
-                        margin-bottom: 20px;
-                    }
-                    nav a {
-                        margin: 0 15px;
-                        text-decoration: none;
-                        color: blue;
-                    }
-                </style>
-            </head>
-            <body>
-                <!-- Navigation Tabs -->
-                <nav>
-                    <a href="/main">Main Page</a>
-                    <a href="/practice">Practice Techniques</a>
-                    <a href="/write">Write</a>
-                    <a href="/archive">Diary Archive</a>
-                </nav>
-
-                <h2>Diary Entry</h2>
-                <p><strong>Author:</strong> ${entry.user.username}</p>
-                <p>${entry.content}</p>
-
-                <!-- Update and Delete Buttons (if the current user owns the entry) -->
-                ${updateDeleteButtons}
-            </body>
-            </html>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+          <title>Diary Entry</title>
+          <!-- Bootstrap CSS -->
+          <link 
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          />
+        </head>
+        <body>
+          <!-- Navbar -->
+          <nav class="navbar navbar-expand-md navbar-light bg-light mb-4">
+            <div class="container">
+              <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+              <button 
+                class="navbar-toggler" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#navbarSupportedContent"
+              >
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item"><a class="nav-link" href="/practice">Practice Techniques</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/write">Write</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/archive">Diary Archive</a></li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        
+          <div class="container">
+            <h2 class="mb-3">Diary Entry</h2>
+            <p><strong>Author:</strong> ${entry.user.username}</p>
+            <div class="border p-3 mb-4">
+              ${entry.content}
+            </div>
+        
+            <!-- Update/Delete Buttons, only if user is owner -->
+            ${updateDeleteButtons}
+          </div>
+        
+          <!-- Bootstrap JS -->
+          <script 
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+          </script>
+        </body>
+        </html>
         `;
+        
 
         res.send(entryPage);
     } catch (error) {
@@ -511,80 +591,109 @@ app.get('/practice-techniques/n7', (req, res) => {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>N+7 Technique</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                padding: 20px;
-            }
-            nav {
-                margin-bottom: 20px;
-            }
-            nav a {
-                margin: 0 15px;
-                text-decoration: none;
-                color: blue;
-            }
-            textarea {
-                width: 40%;
-                height: 100px;
-                margin: 10px 0;
-            }
-            button {
-                margin: 10px 0;
-            }
-        </style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>N+7 Technique</title>
+    <!-- Bootstrap CSS -->
+    <link 
+        rel="stylesheet" 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
     </head>
     <body>
-        <!-- Navigation Tabs -->
-        <nav>
-            <a href="/main">Main Page</a>
-            <a href="/practice-techniques">Practice Techniques</a>
-            <a href="/archive">Diary Archive</a>
-        </nav>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container">
+        <a class="navbar-brand" href="/main">OuLiPien Diary</a>
+        <button 
+            class="navbar-toggler" 
+            type="button"
+            data-bs-toggle="collapse" 
+            data-bs-target="#navbarSupportedContent"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <h1>N+7 Explained:</h1>
-        <p>
-            The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves replacing each 
-            noun in an input text with the seventh one following it in a dictionary.
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/practice-techniques">Practice Techniques</a></li>
+            <li class="nav-item"><a class="nav-link" href="/archive">Diary Archive</a></li>
+            <li class="nav-item"><a class="nav-link" href="/write">Write</a></li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <h1 class="mb-3">N+7 Explained</h1>
+        <p class="lead">
+        The N+7 technique, invented in 1961 by Jean Lescure, a member of Oulipo, involves 
+        replacing each noun in an input text with the seventh one following it in a dictionary.
         </p>
 
-        <textarea id="input-text"></textarea>
-        <button  id="transform-btn">Transform</button>
-        <textarea id="output-text" readonly></textarea>
+        <!-- Input field -->
+        <div class="mb-3">
+        <label for="input-text" class="form-label">Enter text:</label>
+        <textarea 
+            id="input-text" 
+            class="form-control" 
+            rows="4" 
+            placeholder="Write here..."
+        ></textarea>
+        </div>
 
-        <p>* Please save your work as an entry if you want it to be saved (copy/paste to write/add an entry).</p>
-        <script>
-            const transformButton = document.getElementById('transform-btn');
-            const inputTextarea = document.getElementById('input-text');
-            const outputTextarea = document.getElementById('output-text');
-        
-            transformButton.addEventListener('click', async () => {
-                const inputText = inputTextarea.value;
-                // Make a POST request to our server route
-                try {
-                    const response = await fetch('/n7-transform', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: inputText })
-                    });
-                    if (!response.ok) {
-                        throw new Error('Server error while transforming text');
-                    }
-                    const data = await response.json();
-                    // data.transformed is the N+7 result
-                    outputTextarea.value = data.transformed;
-                } catch (err) {
-                    console.error(err);
-                    alert('Error: ' + err.message);
-                }
+        <button id="transform-btn" class="btn btn-primary mb-3">Transform</button>
+
+        <!-- Output field -->
+        <div class="mb-3">
+        <label for="output-text" class="form-label">Transformed text:</label>
+        <textarea 
+            id="output-text" 
+            class="form-control" 
+            rows="4" 
+            readonly
+            placeholder="Transformed text will appear here..."
+        ></textarea>
+        </div>
+
+        <p class="text-muted">
+        * Please save your work as an entry if you want it to be saved (copy/paste to 
+        <a href="/write">Write</a>).
+        </p>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script>
+        const transformButton = document.getElementById('transform-btn');
+        const inputTextarea = document.getElementById('input-text');
+        const outputTextarea = document.getElementById('output-text');
+
+        transformButton.addEventListener('click', async () => {
+        const inputText = inputTextarea.value;
+        try {
+            const response = await fetch('/n7-transform', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: inputText })
             });
-            </script>
-        </body>
-        </html>
+            if (!response.ok) {
+            throw new Error('Server error while transforming text');
+            }
+            const data = await response.json();
+            outputTextarea.value = data.transformed;
+        } catch (err) {
+            console.error(err);
+            alert('Error: ' + err.message);
+        }
+        });
+    </script>
+    </body>
+    </html>
+
     `);
 });
 
